@@ -18,6 +18,12 @@ let ErrorType = {
     message: "All fields are required!",
     isShowStackTrace: false,
   },
+  INVALID_PHONE: {
+    id: 3,
+    httpCode: 400,
+    message: "Phone number is invalid!",
+    isShowStackTrace: false,
+  },
   UNAUTHORIZED: {
     id: 4,
     httpCode: 401,
