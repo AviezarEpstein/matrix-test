@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost", // Computer
   user: "root", // Username
-  password: "1111", // Password
+  password: "1234", // Password
   database: "test_db", // Database name
 });
 
@@ -34,7 +34,7 @@ function executeWithParameters(sql, parameters) {
   return new Promise((resolve, reject) => {
     connection.execute(sql, parameters, (err, result) => {
       if (err) {
-        //console.log("Error " + err);
+        console.log("Error " + err);
         console.log("Failed interacting with DB, calling reject");
         reject(err);
         return;
@@ -42,6 +42,56 @@ function executeWithParameters(sql, parameters) {
       resolve(result);
     });
   });
+}
+
+const customers = new Promise((resolve, reject) => {
+  const sql = `SELECT id, tz, first_name, last_name, date_of_birth, sex
+  FROM customers
+  ORDER BY id`;
+  connection.execute(sql, (err, result) => {
+    if (err) {
+      //console.log("Error " + err);
+      console.log("Failed interacting with DB, calling reject");
+      reject(err);
+      return;
+    }
+    resolve(result);
+  });
+});
+
+const phones = new Promise((resolve, reject) => {
+  const sql = `SELECT id, phone_number as phoneNumber, customer_id as customerId
+  FROM phones
+  order by customer_id`;
+  connection.execute(sql, (err, result) => {
+    if (err) {
+      //console.log("Error " + err);
+      console.log("Failed interacting with DB, calling reject");
+      reject(err);
+      return;
+    }
+    resolve(result);
+  });
+});
+
+function getAllCustomersWithPhones() {
+  return Promise.all([customers, phones])
+    .then((res) => {
+      const customers = res[0];
+      const phones = res[1];
+      customers.map((customer) => {
+        customer.phoneNumbers = [];
+        phones.map((phone)=>{
+          if (phone.customerId == customer.id) {
+            customer.phoneNumbers.push(phone.phoneNumber);
+          }
+        })
+      });
+      return customers;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
 function insertMultipleRows(sql, parameters) {
@@ -62,4 +112,5 @@ module.exports = {
   execute,
   executeWithParameters,
   insertMultipleRows,
+  getAllCustomersWithPhones,
 };

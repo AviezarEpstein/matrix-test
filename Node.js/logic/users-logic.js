@@ -49,6 +49,10 @@ async function login(user) {
       id: userLoginData.userId,
       name: user.userName,
     },
+    "Stack",
+    {
+      expiresIn: "20d", // it will be expired after 20 days
+    },
     config.secret,
     { expiresIn: "7d" }
   );
@@ -56,8 +60,8 @@ async function login(user) {
 }
 
 async function vaidateRegistrationDetails(registrationData) {
-  console.log('USER DATA: ', registrationData);
-  
+  console.log("USER DATA: ", registrationData);
+
   if (!registrationData.userName) {
     throw new ServerError(ErrorType.EMPTY_INPUT);
   }

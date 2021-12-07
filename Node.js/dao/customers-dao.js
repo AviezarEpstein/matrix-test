@@ -3,16 +3,12 @@ let ErrorType = require("../errors/error-type");
 let ServerError = require("../errors/server-error");
 
 async function getAllCustomers() {
-  
-  let sql = `SELECT c.id, c.tz, c.first_name as firstName, c.last_name as lastName, c.date_of_birth as dateOfBirth, c.sex, p.phone_number as phoneNumber 
-  from customers c 
-  join phones p on c.id = p.customer_id`;
-
   try {
-    let customersData = await connection.execute(sql);
+    let customersData = await connection.getAllCustomersWithPhones();
+    console.log(customersData);
     return customersData;
   } catch (e) {
-    throw new ServerError(ErrorType.GENERAL_ERROR, sql, e);
+    throw new ServerError(ErrorType.GENERAL_ERROR, customersData, e);
   }
 }
 

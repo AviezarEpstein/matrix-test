@@ -1,64 +1,10 @@
 const customersDao = require("../dao/customers-dao");
-let ServerError = require("../errors/server-error");
-let ErrorType = require("../errors/error-type");
+const ServerError = require("../errors/server-error");
+const ErrorType = require("../errors/error-type");
 
-
-let newCustomersArray = [];
 async function getAllCustomers() {
-  let customersData = await customersDao.getAllCustomers();
-    let idArray = [];
-    for (let i = 0; i < customersData.length; i++) {
-        if (!idArray.includes(customersData[i].id)) {
-            idArray.push(customersData[i].id);
-        }
-    }
-   setCustomersDataArray(idArray, customersData);
-  return newCustomersArray;
-}
-
-function setCustomersDataArray(idArray, customersData){
-  
-    for (let i = 0; i < idArray.length; i++) {
-        let phoneNumbersPerCustomer = extractPhoneNumbers(idArray[i], customersData);
-        setNewArray(idArray[i], phoneNumbersPerCustomer, customersData);
-    }
-    return newCustomersArray;
-}
-
-function setNewArray(id, phoneNumbersPerCustomer, customersData){
-  let newObj = {};
-  let isFound = false;
-  for (let i = 0; i < customersData.length; i++) {
-    if (customersData[i].id == id && !isFound) {
-      isFound = true;
-      newObj.id = id;
-      newObj.tz = customersData[i].tz;
-      newObj.firstName = customersData[i].firstName;
-      newObj.lastName = customersData[i].lastName;
-      newObj.dateOfBirth = customersData[i].dateOfBirth;
-      newObj.sex = customersData[i].sex;
-      newObj.phoneNumber = phoneNumbersPerCustomer;
-      newCustomersArray.push(newObj);
-    }   
-  }
-}
-
-function extractPhoneNumbers(id, customerData){
-    let phoneNumbers = [];
-    let isFound = false;
-    for (let i = 0; i < customerData.length; i++) {
-        if (customerData[i].id == id) {
-            isFound = true;
-            phoneNumbers.push(customerData[i].phoneNumber)
-        }
-        
-        if (isFound && customerData[i].id != id) {
-            // if we got here that means that we will not find more phone numbers that belongs to this customer
-            // and we could return the phone numbers array
-            return phoneNumbers;
-        }
-    }
-    return phoneNumbers;
+  const customersData = await customersDao.getAllCustomers();
+  return customersData;
 }
 
 async function addCustomer(customerData) {
